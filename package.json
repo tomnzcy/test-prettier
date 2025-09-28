@@ -9,6 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  },  
   "volta": {
     "node": "22.20.0",
     "npm": "10.9.3"
