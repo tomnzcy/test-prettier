@@ -6,11 +6,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-permissions:
-  contents: read
-  issues: write
-  pull-requests: write
-
 jobs:
   format-check:
     runs-on: ubuntu-latest
@@ -55,6 +50,6 @@ jobs:
       - name : Post comment on PR
         if: failure() && github.event_name == 'pull_request'
         run: |
-          gh pr comment ${{ github.event.number }} --body-file comment.md
+          gh pr comment --body-file comment.md
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
