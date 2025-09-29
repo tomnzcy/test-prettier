@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: "package.json" # package.jsonのvolta設定を読む
+          node-version-file: "package.json" # package.jsonのvoltaのnodejsバージョン管理設定を利用
           cache: "npm"
 
       - name: Install dependencies
@@ -31,27 +31,30 @@ jobs:
       - name: Check Prettier formatting
         run: npm run format:check
 
-      - name: Comment on PR if formatting issues found
+      - name: Create comment file
         if: failure() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `## 🤖 Code Formatting Check
-            
-            ❌ **フォーマットチェックが失敗しました**
+        run: | 
+          cat  << EOF > comment.md
+          ## 🤖 Code Formatting Check
 
-              以下のコマンドを実行して、コードをフォーマットしてください：
+          ❌ **フォーマットチェックが失敗しました**
 
-              \`\`\`bash
-                npm run format
-              \`\`\`
+          以下のコマンドを実行して、コードをフォーマットしてください：
 
-              修正後、変更をコミット・プッシュしてください。
+          \`\`\`bash
+            npm run format
+          \`\`\`
 
-              ---
-                _このコメントは GitHub Actions により自動投稿されました_`
-              })
+          修正後、変更をコミット・プッシュしてください。
+
+          ---
+
+          _このコメントは GitHub Actions により自動投稿されました_
+          EOF
+      
+      - name : Post comment on PR
+        if: failure() && github.event_name == 'pull_request'
+        run: |
+          gh pr comment ${{ github.event.number }} --body-file comment.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
