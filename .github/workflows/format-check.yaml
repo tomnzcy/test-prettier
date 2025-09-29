@@ -54,6 +54,6 @@ jobs:
       - name : Post comment on PR
         if: failure() && github.event_name == 'pull_request'
         run: |
-          gh pr comment --body-file comment.md
+          gh pr comment ${{ github.event.pull_request.number }} --body-file comment.md
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
