@@ -32,7 +32,7 @@ jobs:
 
       - name: Create comment file
         if: failure() && github.event_name == 'pull_request'
-        run: | 
+        run: |
           cat  << EOF > comment.md
           ## 🤖 Code Formatting Check
 
@@ -50,8 +50,8 @@ jobs:
 
           _このコメントは GitHub Actions により自動投稿されました_
           EOF
-      
-      - name : Post comment on PR
+
+      - name: Post comment on PR
         if: failure() && github.event_name == 'pull_request'
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body-file comment.md
